@@ -1,25 +1,25 @@
-from djitellopy import Tello
-import cv2
+from djitellopy import Tello    #to access functions of the drone
+import cv2                      #for image and video processing
 
 
 def initializeTello():
-    myDrone = Tello()
+    myDrone = Tello()           #define myDrone as a Tello object to apply specific functions to it
     myDrone.connect()
-    myDrone.for_back_velocity = 0
-    myDrone.left_right_velocity = 0
-    myDrone.up_down_velocity = 0
-    myDrone.yaw_velocity = 0
-    myDrone.speed = 0
-    print(myDrone.get_battery())
-    myDrone.streamoff()
-    myDrone.streamon()
+    myDrone.for_back_velocity = 0       #set velocity forward/backward to 0
+    myDrone.left_right_velocity = 0     #set lateral velocity to 0
+    myDrone.up_down_velocity = 0        #set vertical velocity to 0
+    myDrone.yaw_velocity = 0            #set yaw (turning) velocity to 0
+    myDrone.speed = 0                   
+    print(myDrone.get_battery())        #displays current battery percentage of drone - usefull when testing
+    myDrone.streamoff()                 #turns off the video feed sent by drone - Usefull if previous test's stream is still ongoing
+    myDrone.streamon()                  #turns on the video feed - with last line, this effectively resets the stream
     return myDrone
 
-def telloGetFrame(myDrone, w = 360, h = 240):
-    myFrame = myDrone.get_frame_read()
-    myFrame = myFrame.frame
-    img = cv2.resize(myFrame,(w,h))
-    return img
+def telloGetFrame(myDrone, w = 360, h = 240):   #w is width of image, h is height of image
+    myFrame = myDrone.get_frame_read()          #reads to feed sent by drone
+    myFrame = myFrame.frame                     #converts it to a frame object
+    img = cv2.resize(myFrame,(w,h))             #resizes the frame to take in account the arguments of this function
+    return img                                  
 
 def findFace(img):
     faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
