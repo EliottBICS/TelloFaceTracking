@@ -22,9 +22,9 @@ def telloGetFrame(myDrone, w = 360, h = 240):   #w is width of image, h is heigh
     return img                                  
 
 def findFace(img):
-    faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-    imgGray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    faces = faceCascade.detectMultiScale(imgGray, 1.1, 4)
+    faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml') #applies the classifier
+    imgGray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)                             #converts img to gray img
+    faces = faceCascade.detectMultiScale(imgGray, 1.1, 4)                      #scalefactor and minimum neighbors are parameters
 
     myFaceListC = []
     myFaceListArea = []
