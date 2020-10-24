@@ -15,6 +15,6 @@ while True:
     print(info[0][0])
 
     cv2.imshow('Image',img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        myDrone.land()
+    if cv2.waitKey(1) & 0xFF == ord('q'): #if the Q key is pressed
+        myDrone.land()                    #we make the drone land
         break
