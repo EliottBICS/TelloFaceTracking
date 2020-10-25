@@ -22,24 +22,27 @@ def telloGetFrame(myDrone, w = 360, h = 240):   #w is width of image, h is heigh
     return img                                  
 
 def findFace(img):
-    faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml') #applies the classifier
+    faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml') #applies the classifier, which detect faces facing the camera
     imgGray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)                             #converts img to gray img
     faces = faceCascade.detectMultiScale(imgGray, 1.1, 4)                      #scalefactor and minimum neighbors are parameters
 
-    myFaceListC = []
-    myFaceListArea = []
+    myFaceListC = []    #we create a list that will store the center of the faces
+    myFaceListArea = [] #we create a list of the faces areas, because if the area of a face is the largest, we can conclude it is the closest (it's the best way for now with only
+    # a camera
 
     for (x,y,w,h) in faces:
-        cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
-        cx = (x+w)//2
-        cy = (y+h)//2
-        area = w*h
-        myFaceListArea.append(area)
-        myFaceListC.append([cx,cy])
+        cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)  #draws a rectangle around recogized faces (x,y) is starting corner of the rectangle (x+w,y+h) is the opposed corner
+        # (0,0,255) is the color used for rectangle and 2 its thickness in pixels
+        #return img #used to simply return simply the img to see faces in a picture, but now we want to detect te closest face
+        cx = (x+w)//2 #center of x axis of face
+        cy = (y+h)//2 #center of y axis of face
+        area = w*h #area of face
+        myFaceListArea.append(area) #we store the area of the face
+        myFaceListC.append([cx,cy]) #we store the center of the face
 
-    if len(myFaceListArea) !=0:
+    if len(myFaceListArea) !=0: #we check if any face is present, because some operations are impossible if the list of faces is empty
 
-        i = myFaceListArea.index(max(myFaceListArea))
-        return img, [myFaceListC[i],myFaceListArea[i]]
+        i = myFaceListArea.index(max(myFaceListArea)) #we find the index of the closest face
+        return img, [myFaceListC[i],myFaceListArea[i]] #if there is a face in the frame, we return the img and a tuple containing the center the closest face and its area
     else :
-        return img,[[0,0],0]
+        return img,[[0,0],0] #if there is no face on the frame detected, we return 0 values for center and area
