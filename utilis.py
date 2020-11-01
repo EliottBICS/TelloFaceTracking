@@ -1,5 +1,6 @@
 from djitellopy import Tello    #to access functions of the drone
 import cv2                      #for image and video processing
+import numpy as np
 
 
 def initializeTello():
@@ -46,3 +47,29 @@ def findFace(img):
         return img, [myFaceListC[i],myFaceListArea[i]] #if there is a face in the frame, we return the img and a tuple containing the center the closest face and its area
     else :
         return img,[[0,0],0] #if there is no face on the frame detected, we return 0 values for center and area
+    
+    def trackFace(myDrone,info,w,pid,pError):
+        
+        ##PID controller - helps smoothing movements as opposed to full correction movements
+        error = info[0][0] - w//2 #we want the tracking to put the face in the center, so width divided by 2
+        speed = pid[0]*error + pid[1]*(error-pError)
+        speed = int(np.clip(speed, -100, 100)) #the speed will never go above or under 100
+        print(speed) #for testing purposes
+        
+        if info[0][0] != 0: #if a face is detected
+            myDrone.yaw_velocity = speed
+        else :  #if no face is detected I would like the drone to not move or correct its orientation in any way
+            myDrone.for_back_velocity = 0       #set velocity forward/backward to 0
+            myDrone.left_right_velocity = 0     #set lateral velocity to 0
+            myDrone.up_down_velocity = 0        #set vertical velocity to 0
+            myDrone.yaw_velocity = 0
+            error = 0
+            
+        if myDrone.send_rc_control : #sends the values of velocity to the computer
+            myDrone.send_rc_control(myDrone.left_right_velocity,
+                                   myDrone.for_back_velocity,
+                                   myDrone.yaw_velocity)
+            
+        
+        return error
+            
